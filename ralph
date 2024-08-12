@@ -1,0 +1,50 @@
+<?php
+
+require __DIR__.DIRECTORY_SEPARATOR.'/vendor/autoload.php';
+
+use Dotenv\Dotenv;
+use Codx\Comic\Server;
+use Codx\Comic\Make;
+
+$dotenv = Dotenv::createImmutable(__DIR__.DIRECTORY_SEPARATOR);
+$dotenv->load();
+$dotenv->required([
+    'DB_HOST', 
+    'DB_NAME', 
+    'DB_USER', 
+    'DB_PASS',
+    'PORT',
+    'HOST'
+]);
+$arg1 = preg_split('/\:/', $argv[1]);
+
+$command = $arg1[0];
+
+
+switch ($command) {
+    case 'serve':
+        Server::runServer($argv);
+        break;
+    
+    case 'run':
+        exec('npm run dev');
+        break;
+    
+    case 'make':
+        if(array_key_exists(1, $arg1)){
+            $query = $arg1[1];
+            Make::make($query, $argv);
+            break;
+        }
+        else{
+            throw new \Exception("Error Processing Request in valid arguments passed in cli");
+            
+        }
+        
+        break;
+    
+    default:
+        # code...
+        break;
+}
+
